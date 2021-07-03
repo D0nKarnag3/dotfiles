@@ -1,2 +1,2 @@
-require('packer')
+require('packer_setup')
 require('opts').init()
