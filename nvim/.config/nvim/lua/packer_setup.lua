@@ -18,7 +18,10 @@ return require('packer').startup(function()
   -- Telescope
   use {
     'nvim-telescope/telescope.nvim',
-    requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
+    requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
+    config = function ()
+      require'plugins.telescope'.init()
+    end
   }
 
   -- Treesitter
@@ -34,9 +37,9 @@ return require('packer').startup(function()
 
   -- Themes
   use {
-	  'gruvbox-community/gruvbox',
-	  config = function()
-		  require 'plugins.gruvbox'.init()
-	  end
+    'gruvbox-community/gruvbox',
+    config = function()
+      require 'plugins.gruvbox'.init()
+    end
   }
 end)
