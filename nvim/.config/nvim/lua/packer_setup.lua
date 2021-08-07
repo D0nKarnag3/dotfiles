@@ -32,7 +32,28 @@ return require('packer').startup(function()
 
   -- Completion
   use {
-    'hrsh7th/nvim-compe'
+    'hrsh7th/nvim-compe',
+    config = function ()
+      require'plugins.compe'.init()
+      require'plugins.lspkind'.init()
+    end
+  }
+
+  -- Git support
+  use 'rhysd/git-messenger.vim'
+  use {
+    'lewis6991/gitsigns.nvim',
+    config = function()
+      require'plugins.gitsigns'.init()
+    end
+  }
+
+  -- Utilities
+  use {
+    'hoob3rt/lualine.nvim',
+    config = function()
+      require'plugins.lualine'.init()
+    end
   }
 
   -- Themes

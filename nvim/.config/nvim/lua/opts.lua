@@ -26,7 +26,6 @@ local function set_vim_o()
   vim.cmd('set undodir=~/.vim/undodir')
   vim.cmd('set tabstop=4')
   vim.cmd('set number')
-  vim.cmd('set relativenumber')
   vim.cmd('set nohlsearch')
 end
 
