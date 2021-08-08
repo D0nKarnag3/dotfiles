@@ -13,7 +13,17 @@ return require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
   -- LSP
-  use 'neovim/nvim-lspconfig'
+  --use 'neovim/nvim-lspconfig'
+  use {
+    'd0nkarnag3/lspcontainers.nvim',
+    requires = {
+      'neovim/nvim-lspconfig',
+      'nvim-lua/lsp_extensions.nvim'
+    },
+    config = function ()
+      require'plugins/lspconfig'.init()
+    end
+  }
 
   -- Telescope
   use {
@@ -33,6 +43,9 @@ return require('packer').startup(function()
   -- Completion
   use {
     'hrsh7th/nvim-compe',
+    requires = {
+      'onsails/lspkind-nvim'
+    },
     config = function ()
       require'plugins.compe'.init()
       require'plugins.lspkind'.init()
