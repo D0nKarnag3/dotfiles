@@ -87,8 +87,12 @@ local function setup(config, server)
   end
 
   if server == "omnisharp" then
+    config.before_init = function(params)
+      params.processId = vim.NIL
+    end
+
     config.cmd = lspcontainers.command(server)
-    config.root_dir = util.root_pattern(".csproj", ".sln", vim.fn.getcwd())
+    config.root_dir = util.root_pattern("*.csproj", "*.sln", vim.fn.getcwd())
     config.filetypes = { "cs", "vb" }
   end
 end
