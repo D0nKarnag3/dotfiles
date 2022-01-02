@@ -85,7 +85,9 @@ local function init()
     "sumneko_lua",
     "tsserver",
     "yamlls",
-    "omnisharp"
+    "omnisharp",
+    "rust_analyzer",
+    "vuels"
   }
 
   for _, server in pairs(lspconfig_servers) do

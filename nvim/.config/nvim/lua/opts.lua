@@ -27,6 +27,7 @@ local function set_vim_o()
   vim.cmd('set tabstop=4')
   vim.cmd('set number')
   vim.cmd('set nohlsearch')
+  vim.cmd('set shiftwidth=2')
 end
 
 local function init()

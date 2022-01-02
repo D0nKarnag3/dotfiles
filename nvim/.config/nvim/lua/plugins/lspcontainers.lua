@@ -95,6 +95,24 @@ local function setup(config, server)
     config.root_dir = util.root_pattern("*.csproj", "*.sln", vim.fn.getcwd())
     config.filetypes = { "cs", "vb" }
   end
+
+  if server == "rust_analyzer" then
+    config.cmd = lspcontainers.command(server)
+    config.root_dir = util.root_pattern(".git", vim.fn.getcwd())
+
+    vim.api.nvim_exec([[
+      autocmd CursorMoved,InsertLeave,BufEnter,BufWinEnter,TabEnter,BufWritePost *.rs :lua require'lsp_extensions'.inlay_hints{ prefix = ' » ', highlight = "NonText", enabled = {"TypeHint", "ChainingHint", "ParameterHint" } }
+    ]], false)
+  end
+
+  if server == "vuels" then
+    config.before_init = function(params)
+      params.processId = vim.NIL
+    end
+    
+    config.cmd = lspcontainers.command(server)
+    config.root_dir = util.root_pattern(".git", vim.fn.getcwd())
+  end
 end
 
 return {
