@@ -42,12 +42,12 @@ return require('packer').startup(function()
 
   -- Completion
   use {
-    'hrsh7th/nvim-compe',
+    'hrsh7th/nvim-cmp',
     requires = {
       'onsails/lspkind-nvim'
     },
     config = function ()
-      require'plugins.compe'.init()
+      require'plugins.cmp'.init()
       require'plugins.lspkind'.init()
     end
   }

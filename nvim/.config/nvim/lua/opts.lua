@@ -10,7 +10,8 @@ local function set_vim_o()
     hidden = true,
     softtabstop = 4,
     termguicolors = true,
-    incsearch = true
+    incsearch = true,
+    shiftwidth = 2
   }
 
   -- Generic vim.o
@@ -27,7 +28,6 @@ local function set_vim_o()
   vim.cmd('set tabstop=4')
   vim.cmd('set number')
   vim.cmd('set nohlsearch')
-  vim.cmd('set shiftwidth=2')
 end
 
 local function init()
