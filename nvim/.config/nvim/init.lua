@@ -1,2 +1,2 @@
 require('packer_setup')
-require('opts').init()
+require('vim').init()
