@@ -1,2 +1,2 @@
-require('packer_setup')
-require('vim').init()
+require('bawsen.core')
+require('bawsen.lazy')
