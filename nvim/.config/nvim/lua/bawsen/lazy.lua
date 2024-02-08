@@ -13,7 +13,7 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({ { import = "bawsen.plugins" }, { import = "bawsen.plugins.lsp" } }, {
   install = {
-    colorscheme = { "gruvbox" },
+    colorscheme = { "catppuccin" },
   },
   checker = {
     enabled = true,
