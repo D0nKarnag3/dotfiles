@@ -1,13 +1,30 @@
 return {
   'hrsh7th/nvim-cmp',
+  event = 'InsertEnter',
   dependencies = {
-    'onsails/lspkind-nvim'
+    -- autocomplete paris
+    'windwp/nvim-autopairs',
+
+    -- snippets
+    'L3MON4D3/LuaSnip',
+
+    -- auto completion sources
+    'saadparwaiz1/cmp_luasnip',
+    'hrsh7th/cmp-nvim-lua',
+    'hrsh7th/cmp-nvim-lsp',
+    --'hrsh7th/cmp-nvim-lsp-signature-help',
+    'hrsh7th/cmp-buffer',
+    'hrsh7th/cmp-path',
+    'onsails/lspkind-nvim',
   },
   config = function ()
-    --require'nvim-cmp'.init()
-    --require'nvim-lspkind'.init()
     local cmp = require("cmp")
+    --local types = require("cmp.types")
     local lspkind = require("lspkind")
+    local luasnip = require("luasnip")
+
+    -- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
+    require("luasnip.loaders.from_vscode").lazy_load()
 
     cmp.setup({
       formatting = {
@@ -26,7 +43,8 @@ return {
       },
       snippet = {
         expand = function(args)
-          vim.fn["vsnip#anonymous"](args.body)
+          luasnip.lsp_expand(args.body)
+          --vim.fn["vsnip#anonymous"](args.body)
         end,
       },
       mapping = {
@@ -40,10 +58,12 @@ return {
         }),
         ['<CR>'] = cmp.mapping.confirm({ select = true }),
       },
+      -- sources for autocompletion
       sources = {
         { name = 'cmp_tabnine' },
         { name = 'nvim_lsp' },
         { name = 'nvim_lua' },
+        { name = 'luasnip' },
         { name = 'treesitter' },
         { name = 'vsnip' },
       }

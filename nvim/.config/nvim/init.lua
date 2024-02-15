@@ -1,4 +1,3 @@
-require('bawsen.core')
-require('bawsen.lazy')
+require("config.lazy")
 
-vim.cmd.colorscheme("catppuccin")
+vim.cmd([[colorscheme catppuccin]])
