@@ -9,7 +9,7 @@ return {
 
     keymap.set(
       "n",
-      "<leader>hm",
+      "<leader>ha",
       "<cmd>lua require('harpoon.mark').add_file()<cr>",
       { desc = "Mark file with harpoon" }
     )
@@ -20,5 +20,6 @@ return {
       "<cmd>lua require('harpoon.ui').nav_prev()<cr>",
       { desc = "Go to previous harpoon mark" }
     )
+    keymap.set("n", "<leader>he", "<cmd> lua require('harpoon.ui').toggle_quick_menu", { desc = "Harpoon quick menu" })
   end
 }

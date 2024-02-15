@@ -50,7 +50,7 @@ keymap.set({ "n", "v" }, "<leader>y", [["+y]])
 keymap.set("n", "<leader>Y", [["+Y]])
 
 -- Delete to void register
-keymap.set({ "n", "v" }, "<leader>d", [["_d]])
+keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Delete to void register" } )
 
 -- Fixed ctr+c weirdness to exit from vertical select mode
 keymap.set("i", "<C-c>", "<Esc>")
@@ -65,13 +65,13 @@ keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
 keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
 -- Search and replace current position word
-keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w\>/<C-r><C-w>/gI<Left><Left><Left>]])
+keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Search and replace current position word" })
 
 -- Make file executable
-keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
+keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true, desc = "Make file executable" })
 
 -- Undotree
-keymap.set("n", "<leader>uu", vim.cmd.UndotreeToggle)
+keymap.set("n", "<leader>uu", vim.cmd.UndotreeToggle, { desc = "Undotree toggle" })
 
 -- Oil
 keymap.set("n", "<leader>e", "<cmd>lua require('oil').toggle_float()<CR>", { desc = "Oil" })
@@ -83,11 +83,11 @@ keymap.set("n", "<leader>tt", "<cmd>Twilight<CR>", { desc = "Toggle Twilight" })
 keymap.set("n", "<leader>z", "<cmd>ZenMode<CR>", { desc = "Toggle ZenMode" })
 
 -- Harpoon
-local mark = require("harpoon.map")
-local ui = require("harpoon.ui")
+--local mark = require("harpoon.mark")
+--local ui = require("harpoon.ui")
 
-keymap.set("n", "<leader>ha", mark.add_file)
-keymap.set("n", "<leader>he", ui.toggle_quick_menu)
+--keymap.set("n", "<leader>ha", mark.add_file, { desc = "Harpoon file" })
+--keymap.set("n", "<leader>he", ui.toggle_quick_menu, { desc = "Harpoon quick menu" })
 
 keymap.set("n", "<leader>h1", function()
 	ui.nav_file(1)

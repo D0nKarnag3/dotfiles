@@ -51,5 +51,5 @@ opt.undofile = true
 opt.scrolloff = 8
 
 opt.colorcolumn = "120"
-opt.publend = 0
+opt.pumblend = 0
 opt.updatetime = 50
