@@ -1,4 +1,6 @@
---local function on_attach(client, bufnr) local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+--local function on_attach(client, bufnr)
+  --local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+--
   ---- Mappings.
   --local opts = { noremap=true, silent=true }
 --
@@ -52,6 +54,7 @@
 --end
 
 local on_attach = function(client, bufnr)
+
   local map = function(keys, func, desc)
     if desc then
         desc = "LSP: " .. desc
@@ -88,6 +91,113 @@ local on_attach = function(client, bufnr)
   imap("<c-k>", vim.lsp.buf.signature_help, "Signature Help")
 end
 
+--return {
+  --{ "williamboman/mason.nvim", config = true },
+  --config = function()
+    ---- import mason
+    --local mason = require("mason")
+--
+    ---- enable mason and configure icons
+    --mason.setup({
+      --ui = {
+        --icons = {
+          --package_installed = "✓",
+          --package_pending = "➜",
+          --package_uninstalled = "✗",
+        --},
+      --},
+      --registries = {
+          --"github:mason-org/mason-registry",
+          --"github:d0nkarnag3/mason-registry",
+      --},
+    --})
+  --end,
+  --{
+    --"williamboman/mason-lspconfig.nvim",
+    --event = "BufReadPre",
+    --dependencies = {
+      --"neovim/nvim-lspconfig",
+--
+      ---- plugins to setup lsp servers
+      --"folke/neodev.nvim",
+      --"jmederosalvarado/roslyn.nvim",
+--
+      ---- better ui for lsp progress
+      --{ "j-hui/fidget.nvim", tag  = "legacy", config = true },
+    --},
+    --config = function()
+      --local cmp_nvim_lsp = require("cmp_nvim_lsp")
+      --local capabilities2 = vim.lsp.protocol.make_client_capabilities()
+      --capabilities2.textDocument.completion.completionItem.snippetSupport = true
+      --capabilities2.textDocument.completion.completionItem.resolveSupport = {
+        --properties = {
+          --'documentation',
+          --'detail',
+          --'additionalTextEdits',
+        --}
+      --}
+      --local capabilities = vim.tbl_deep_extend(
+        --"force",
+        --vim.lsp.protocol.make_client_capabilities(),
+        --cmp_nvim_lsp.default_capabilities()
+      --)
+--
+--
+      --require("roslyn").setup({
+        --on_attach = on_attach,
+        --capabilities = capabilities2
+      --})
+--
+      ---- import mason-lspconfig
+      --local mason_lspconfig = require("mason-lspconfig")
+      --mason_lspconfig.setup({
+        ---- list of servers for mason to install
+        --ensure_installed = {
+          --"tsserver",
+          --"html",
+          --"cssls",
+          --"tailwindcss",
+          --"lua_ls",
+          --"emmet_ls",
+        --},
+--
+        ---- auto-install configured servers (with lspconfig)
+        --automatic_installation = true, -- not the same as ensure_installed
+      --})
+      --mason_lspconfig.setup_handlers({
+        --function(server_name)
+          --require("lspconfig")[server_name].setup({
+            --on_attach = on_attach,
+            --capabilities = capabilities,
+          --})
+        --end,
+--
+        --["lua_ls"] = function()
+          --require("neodev").setup()
+          --require("lspconfig").lua_ls.setup({
+            --on_attach = on_attach,
+            --capabilities = capabilities,
+            --settings = { -- custom settings for lua
+              --Lua = {
+                ---- make the language server recognize "vim" global
+                --diagnostics = {
+                  --globals = { "vim" },
+                --},
+                --workspace = {
+                  ---- make language server aware of runtime files
+                  --library = {
+                    --[vim.fn.expand("$VIMRUNTIME/lua")] = true,
+                    --[vim.fn.stdpath("config") .. "/lua"] = true,
+                  --}
+                --}
+              --}
+            --}
+          --})
+        --end
+      --})
+    --end
+  --},
+--}
 return {
   {
     "williamboman/mason.nvim",
@@ -116,17 +226,14 @@ return {
     event = "BufReadPre",
     dependencies = {
       "neovim/nvim-lspconfig",
-      "saghen/blink.cmp",
 
       -- plugins to setup lsp servers
       "folke/neodev.nvim",
       "seblj/roslyn.nvim",
     },
     config = function()
-      --local cmp_nvim_lsp = require("cmp_nvim_lsp")
+      local cmp_nvim_lsp = require("cmp_nvim_lsp")
       local capabilities2 = vim.lsp.protocol.make_client_capabilities()
-      local blink = require("blink.cmp")
-
       capabilities2.textDocument.completion.completionItem.snippetSupport = true
       capabilities2.textDocument.completion.completionItem.resolveSupport = {
         properties = {
@@ -138,34 +245,31 @@ return {
       local capabilities = vim.tbl_deep_extend(
         "force",
         vim.lsp.protocol.make_client_capabilities(),
-        blink.get_lsp_capabilities(capabilities2)
-        --cmp_nvim_lsp.default_capabilities()
+        cmp_nvim_lsp.default_capabilities()
       )
 
+      --require("roslyn").setup({
+        --exe = { "Microsoft.CodeAnalysis.LanguageServer" },
+        --config = {
+        --log_level = "info",
+        --on_attach = on_attach,
+        --capabilities = capabilities
+      --})
 
       require("roslyn").setup({
-        cmd = { "Microsoft.CodeAnalysis.LanguageServer" },
+        exe = { "Microsoft.CodeAnalysis.LanguageServer" },
         config = {
-          log_level = "info",
           on_attach = on_attach,
-          capabilities = capabilities
+          handlers = {
+            ["textDocument/hover"] = function(err, result, ctx, config)
+              if result and result.contents and result.contents.value then
+                result.contents.value = result.contents.value:gsub("\\([^%w])", "%1")
+              end
+              vim.lsp.handlers["textDocument/hover"](err, result, ctx, config)
+            end
+          }
         }
       })
-
-      --require("roslyn").setup({
-        --cmd = { "Microsoft.CodeAnalysis.LanguageServer" },
-        --config = {
-          --on_attach = on_attach,
-          --handlers = {
-            --["textDocument/hover"] = function(err, result, ctx, config)
-              --if result and result.contents and result.contents.value then
-                --result.contents.value = result.contents.value:gsub("\\([^%w])", "%1")
-              --end
-              --vim.lsp.handlers["textDocument/hover"](err, result, ctx, config)
-            --end
-          --}
-        --}
-      --})
 
       -- import mason-lspconfig
       local mason_lspconfig = require("mason-lspconfig")
@@ -224,71 +328,3 @@ return {
     end
   },
 }
-
---return {
-  --"neovim/nvim-lspconfig",
-  --config = function()
-    --local ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
-    --local capabilities = vim.tbl_deep_extend(
-      --"force",
-      --vim.lsp.protocol.make_client_capabilities(),
-      --ok and cmp_nvim_lsp.default_capabilities() or {}
-    --)
---
-    --require("roslyn").setup({
-      --cmd = { "Microsoft.CodeAnalysis.LanguageServer" },
-      --config = {
-        --on_attach = on_attach,
-        --handlers = {
-          --["textDocument/hover"] = function(err, result, ctx, config)
-            --if result and result.contents and result.contents.value then
-              --result.contents.value = result.contents.value:gsub("\\([^%w])", "%1")
-            --end
-            --vim.lsp.handlers["textDocument/hover"](err, result, ctx, config)
-          --end,
-        --},
-      --},
-    --})
---
-    --local mason_lspconfig = require("mason-lspconfig")
-    --mason_lspconfig.setup({
-      ---- list of servers for mason to install
-      --ensure_installed = {
-        --"ts_ls",
-        --"html",
-        --"cssls",
-        --"tailwindcss",
-        --"lua_ls",
-        --"emmet_ls",
-      --},
-      --
-      ---- auto-install configured servers (with lspconfig)
-      --automatic_installation = true, -- not the same as ensure_installed
-    --})
---
-    ----require("mason-lspconfig").setup_handlers({
-      ----function(server)
-        ----require("lspconfig")[server_name].setup({
-          ----on_attach = on_attach,
-          ----capabilities = capabilities,
-        ----})
-      ----end,
-    ----})
---
-    ----require("lspconfig.ui.windows").default_options.border = CUSTOM_BORDER
-  --end,
-  --event = { "BufReadPre", "BufNewFile" },
-  --dependencies = {
-    --{
-      --"folke/lazydev.nvim",
-      --ft = "lua",
-      --opts = { library = { { path = "luvit-meta/library", words = { "vim%.uv" } } } },
-    --},
-    --{ "Bilal2453/luvit-meta", lazy = true },
-    --{ "b0o/schemastore.nvim" },
-    --{ "williamboman/mason.nvim", config = true, cmd = "Mason" },
-    --{ "williamboman/mason-lspconfig.nvim", config = true, cmd = { "LspInstall", "LspUninstall" } },
-    ----{ "seblj/nvim-lsp-extras", opts = { global = { border = { "", "", "", "", "", "", "", "" } } }, dev = true },
-    --{ "seblj/roslyn.nvim" },
-  --},
---}

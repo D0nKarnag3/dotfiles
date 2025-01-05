@@ -1,0 +1,290 @@
+--local function on_attach(client, bufnr)
+  --local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+--
+  ---- Mappings.
+  --local opts = { noremap=true, silent=true }
+--
+  ---- See `:help vim.lsp.*` for documentation on any of the below functions
+  --opts.desc = "Go to declaration"
+  --buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+--
+  --opts.desc = "Go to definition"
+  --buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  --buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  --buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  --buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  --buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  --buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+--
+  --buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+--
+  --buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+--
+  --buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  --buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  --buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  --buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+--
+  --buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+--
+  --buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  --buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  --buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+--
+  ---- Set some keybinds conditional on server capabilities
+  --if client.resolved_capabilities.document_formatting then
+    --buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  --end
+  --if client.resolved_capabilities.document_range_formatting then
+    --buf_set_keymap("v", "<space>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+  --end
+--
+  ---- Set autocommands conditional on server_capabilities
+  --if client.resolved_capabilities.document_highlight then
+--
+    --vim.api.nvim_exec([[
+      --augroup lsp_document_highlight
+        --autocmd! * <buffer>
+--
+        --autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        --autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+      --augroup END
+    --]], false)
+  --end
+--end
+
+local on_attach = function(client, bufnr)
+  local map = function(keys, func, desc)
+    if desc then
+        desc = "LSP: " .. desc
+    end
+
+    vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+  end
+
+  local imap = function(keys, func, desc)
+    if desc then
+        desc = "LSP: " .. desc
+    end
+
+    vim.keymap.set("i", keys, func, { buffer = bufnr, desc = desc })
+  end
+
+  map("gi", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+
+  local telescope_builtin = require("telescope.builtin")
+
+  map('gd', telescope_builtin.lsp_definitions, '[G]oto [D]efinition')
+  map("gr", telescope_builtin.lsp_references, "LSP: [G]oto [R]eferences" )
+  map("gi", telescope_builtin.lsp_implementations, "[G]o to [I]mplementations")
+  map('<leader>D', telescope_builtin.lsp_type_definitions, 'Type [D]efinition')
+  map("<leader>ds", telescope_builtin.lsp_document_symbols, "[D]ocument [S]ymbols")
+  map("<leader>ws", telescope_builtin.lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+
+  map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+  map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+
+  map("K", vim.lsp.buf.hover, "Hover Documentation")
+  map("<leader>k", vim.diagnostic.open_float, "Float Documentation")
+  map("<leader>K", vim.lsp.buf.signature_help, "Signature Help")
+  imap("<c-k>", vim.lsp.buf.signature_help, "Signature Help")
+end
+
+--return {
+  --{
+    --"williamboman/mason.nvim",
+    --config = function()
+    ---- import mason
+    --local mason = require("mason")
+--
+    ---- enable mason and configure icons
+    --mason.setup({
+      --ui = {
+        --icons = {
+          --package_installed = "✓",
+          --package_pending = "➜",
+          --package_uninstalled = "✗",
+        --},
+      --},
+      --registries = {
+          --"github:mason-org/mason-registry",
+          --"github:d0nkarnag3/mason-registry",
+      --},
+    --})
+  --end,
+  --},
+  --{
+    --"williamboman/mason-lspconfig.nvim",
+    --event = "BufReadPre",
+    --dependencies = {
+      --"neovim/nvim-lspconfig",
+--
+      ---- plugins to setup lsp servers
+      --"folke/neodev.nvim",
+      --"seblj/roslyn.nvim",
+    --},
+    --config = function()
+      --local cmp_nvim_lsp = require("cmp_nvim_lsp")
+      --local capabilities2 = vim.lsp.protocol.make_client_capabilities()
+      --capabilities2.textDocument.completion.completionItem.snippetSupport = true
+      --capabilities2.textDocument.completion.completionItem.resolveSupport = {
+        --properties = {
+          --'documentation',
+          --'detail',
+          --'additionalTextEdits',
+        --}
+      --}
+      --local capabilities = vim.tbl_deep_extend(
+        --"force",
+        --vim.lsp.protocol.make_client_capabilities(),
+        --cmp_nvim_lsp.default_capabilities()
+      --)
+--
+      ----require("roslyn").setup({
+        ----exe = { "Microsoft.CodeAnalysis.LanguageServer" },
+        ----config = {
+        ----log_level = "info",
+        ----on_attach = on_attach,
+        ----capabilities = capabilities
+      ----})
+--
+      --require("roslyn").setup({
+        --exe = { "Microsoft.CodeAnalysis.LanguageServer" },
+        --config = {
+          --on_attach = on_attach,
+          --handlers = {
+            --["textDocument/hover"] = function(err, result, ctx, config)
+              --if result and result.contents and result.contents.value then
+                --result.contents.value = result.contents.value:gsub("\\([^%w])", "%1")
+              --end
+              --vim.lsp.handlers["textDocument/hover"](err, result, ctx, config)
+            --end
+          --}
+        --}
+      --})
+--
+      ---- import mason-lspconfig
+      --local mason_lspconfig = require("mason-lspconfig")
+      --mason_lspconfig.setup({
+        ---- list of servers for mason to install
+        --ensure_installed = {
+          --"ts_ls",
+          --"html",
+          --"cssls",
+          --"tailwindcss",
+          --"lua_ls",
+          --"emmet_ls",
+        --},
+--
+        ---- auto-install configured servers (with lspconfig)
+        --automatic_installation = true, -- not the same as ensure_installed
+      --})
+      --mason_lspconfig.setup_handlers({
+        --function(server_name)
+          --require("lspconfig")[server_name].setup({
+            --on_attach = on_attach,
+            --capabilities = capabilities,
+          --})
+        --end,
+        ----["roslyn"] = function()
+          ----require("lspconfig").roslyn.setup({
+            ----log_level = "info",
+            ----dotnet_cmd = "dotnet",
+            ----on_attach = on_attach,
+            ----capabilities = capabilities,
+          ----})
+        ----end,
+        --["lua_ls"] = function()
+          --require("neodev").setup()
+          --require("lspconfig").lua_ls.setup({
+            --on_attach = on_attach,
+            --capabilities = capabilities,
+            --settings = { -- custom settings for lua
+              --Lua = {
+                ---- make the language server recognize "vim" global
+                --diagnostics = {
+                  --globals = { "vim" },
+                --},
+                --workspace = {
+                  ---- make language server aware of runtime files
+                  --library = {
+                    --[vim.fn.expand("$VIMRUNTIME/lua")] = true,
+                    --[vim.fn.stdpath("config") .. "/lua"] = true,
+                  --}
+                --}
+              --}
+            --}
+          --})
+        --end
+      --})
+    --end
+  --},
+--}
+
+return {
+  "neovim/nvim-lspconfig",
+  config = function()
+    local ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+    local capabilities = vim.tbl_deep_extend(
+      "force",
+      vim.lsp.protocol.make_client_capabilities(),
+      ok and cmp_nvim_lsp.default_capabilities() or {}
+    )
+
+    require("roslyn").setup({
+      cmd = { "Microsoft.CodeAnalysis.LanguageServer" },
+      config = {
+        on_attach = on_attach,
+        handlers = {
+          ["textDocument/hover"] = function(err, result, ctx, config)
+            if result and result.contents and result.contents.value then
+              result.contents.value = result.contents.value:gsub("\\([^%w])", "%1")
+            end
+            vim.lsp.handlers["textDocument/hover"](err, result, ctx, config)
+          end,
+        },
+      },
+    })
+
+    local mason_lspconfig = require("mason-lspconfig")
+    mason_lspconfig.setup({
+      -- list of servers for mason to install
+      ensure_installed = {
+        "ts_ls",
+        "html",
+        "cssls",
+        "tailwindcss",
+        "lua_ls",
+        "emmet_ls",
+      },
+      
+      -- auto-install configured servers (with lspconfig)
+      automatic_installation = true, -- not the same as ensure_installed
+    })
+
+    --require("mason-lspconfig").setup_handlers({
+      --function(server)
+        --require("lspconfig")[server_name].setup({
+          --on_attach = on_attach,
+          --capabilities = capabilities,
+        --})
+      --end,
+    --})
+
+    --require("lspconfig.ui.windows").default_options.border = CUSTOM_BORDER
+  end,
+  event = { "BufReadPre", "BufNewFile" },
+  dependencies = {
+    {
+      "folke/lazydev.nvim",
+      ft = "lua",
+      opts = { library = { { path = "luvit-meta/library", words = { "vim%.uv" } } } },
+    },
+    { "Bilal2453/luvit-meta", lazy = true },
+    { "b0o/schemastore.nvim" },
+    { "williamboman/mason.nvim", config = true, cmd = "Mason" },
+    { "williamboman/mason-lspconfig.nvim", config = true, cmd = { "LspInstall", "LspUninstall" } },
+    --{ "seblj/nvim-lsp-extras", opts = { global = { border = { "", "", "", "", "", "", "", "" } } }, dev = true },
+    { "seblj/roslyn.nvim" },
+  },
+}
